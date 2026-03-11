@@ -1,10 +1,11 @@
-import { List, Star, Map, AlertTriangle } from 'lucide-react'
+import { List, Star, Map, AlertTriangle, Clock } from 'lucide-react'
 
 const TABS = [
-  { id: 'list',      label: 'Liste',    Icon: List          },
-  { id: 'favorites', label: 'Favoris',  Icon: Star          },
-  { id: 'map',       label: 'Carte',    Icon: Map           },
-  { id: 'traffic',   label: 'Trafic',   Icon: AlertTriangle },
+  { id: 'list',      label: 'Liste',     Icon: List          },
+  { id: 'favorites', label: 'Favoris',   Icon: Star          },
+  { id: 'map',       label: 'Carte',     Icon: Map           },
+  { id: 'traffic',   label: 'Trafic',    Icon: AlertTriangle },
+  { id: 'schedules', label: 'Horaires',  Icon: Clock         },
 ]
 
 export default function Navigation({ activeTab, onTabChange }) {
@@ -20,16 +21,16 @@ export default function Navigation({ activeTab, onTabChange }) {
                 aria-label={label}
                 aria-current={active ? 'page' : undefined}
                 className={`
-                  w-full py-2.5 flex flex-col items-center gap-0.5 transition-colors
+                  w-full py-2 flex flex-col items-center gap-0.5 transition-colors
                   ${active ? 'text-tcl-red' : 'text-gray-400 active:text-gray-600'}
                 `}
               >
                 <Icon
-                  size={20}
+                  size={19}
                   strokeWidth={active ? 2.5 : 1.8}
                   fill={active && id === 'favorites' ? 'currentColor' : 'none'}
                 />
-                <span className={`text-[10px] font-medium ${active ? 'font-semibold' : ''}`}>
+                <span className={`text-[9px] font-medium leading-none ${active ? 'font-semibold' : ''}`}>
                   {label}
                 </span>
               </button>

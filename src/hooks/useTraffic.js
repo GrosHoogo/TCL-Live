@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 
 const TRAFFIC_URL =
-  'https://data.grandlyon.com/fr/datapusher/ws/rdata/tcl_sytral.tclalertetrafic_2/all.json?maxfeatures=100&start=1&filename=alertes-trafic-reseau-transports-commun-lyonnais-v2'
+  'https://data.grandlyon.com/fr/datapusher/ws/rdata/tcl_sytral.tclalertetrafic_2/all.json?maxfeatures=-1&start=1&filename=alertes-trafic-reseau-transports-commun-lyonnais-v2'
 
 // Basic Auth header built from Vite env vars (stored in .env, never committed)
 const AUTH_HEADER = `Basic ${btoa(

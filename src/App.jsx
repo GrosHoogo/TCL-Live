@@ -2,11 +2,13 @@ import { useState, useMemo } from 'react'
 import { useParkings } from './hooks/useParkings'
 import { useFavorites } from './hooks/useFavorites'
 import { useTraffic } from './hooks/useTraffic'
+import { useSchedules } from './hooks/useSchedules'
 import Header from './components/Header'
 import Navigation from './components/Navigation'
 import ParkList from './components/ParkList'
 import MapView from './components/MapView'
 import TrafficList from './components/TrafficList'
+import ScheduleView from './components/ScheduleView'
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('list')
@@ -14,6 +16,7 @@ export default function App() {
   const { parkings, loading, error, source, lastFetched, refresh: refreshParkings } = useParkings()
   const { isFavorite, toggleFavorite } = useFavorites()
   const { alerts, loading: trafficLoading, error: trafficError, refresh: refreshTraffic } = useTraffic()
+  const { passages, loading: schedulesLoading, error: schedulesError, refresh: refreshSchedules } = useSchedules()
 
   const favoriteParkings = useMemo(
     () => parkings.filter((p) => isFavorite(p.id)),
@@ -23,13 +26,14 @@ export default function App() {
   function handleRefresh() {
     refreshParkings()
     refreshTraffic()
+    refreshSchedules()
   }
 
   return (
     <div className="flex flex-col h-full max-w-lg mx-auto bg-gray-50">
       <Header
         onRefresh={handleRefresh}
-        loading={loading || trafficLoading}
+        loading={loading || trafficLoading || schedulesLoading}
         lastFetched={lastFetched}
         source={source}
       />
@@ -73,6 +77,14 @@ export default function App() {
             alerts={alerts}
             loading={trafficLoading}
             error={trafficError}
+          />
+        )}
+
+        {activeTab === 'schedules' && (
+          <ScheduleView
+            passages={passages}
+            loading={schedulesLoading}
+            error={schedulesError}
           />
         )}
       </main>
