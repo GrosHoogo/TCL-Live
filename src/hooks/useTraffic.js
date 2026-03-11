@@ -3,29 +3,49 @@ import { useState, useEffect, useCallback } from 'react'
 const TRAFFIC_URL =
   'https://data.grandlyon.com/fr/datapusher/ws/rdata/tcl_sytral.tclalertetrafic_2/all.json?maxfeatures=100&start=1&filename=alertes-trafic-reseau-transports-commun-lyonnais-v2'
 
-function parseAlerts(geojson) {
-  if (!geojson?.features) return []
+// Basic Auth header built from Vite env vars (stored in .env, never committed)
+const AUTH_HEADER = `Basic ${btoa(
+  `${import.meta.env.VITE_GL_USER}:${import.meta.env.VITE_GL_PASS}`
+)}`
 
-  return geojson.features
-    .map((f) => {
-      const p = f.properties ?? {}
-      return {
-        id: String(p.gid ?? p.id ?? Math.random()),
-        ligne: p.ligne ?? p.line ?? null,
-        titre: p.titre ?? p.title ?? p.nom ?? 'Perturbation',
-        message: p.message ?? p.description ?? '',
-        dateDebut: p.date_debut ?? p.dateDebut ?? p.date_start ?? null,
-        dateFin: p.date_fin ?? p.dateFin ?? p.date_end ?? null,
-        type: (p.type_alerte ?? p.type ?? 'INFO').toUpperCase(),
-      }
+/**
+ * Parse the datapusher JSON response (data.values[]).
+ * Filters out alerts whose `fin` date is in the past.
+ */
+function parseAlerts(data) {
+  if (!Array.isArray(data?.values)) return []
+
+  const now = new Date()
+
+  return data.values
+    .filter((v) => {
+      if (!v.fin) return true
+      // Parse "YYYY-MM-DD HH:MM:SS" → Date
+      const fin = new Date(v.fin.replace(' ', 'T'))
+      return fin > now
     })
+    .map((v) => ({
+      id: String(v.n ?? Math.random()),
+      ligne: v.ligne_com ?? v.ligne_cli ?? null,
+      titre: (v.titre ?? 'Perturbation').trim(),
+      message: v.message ?? '',
+      cause: v.cause ?? null,
+      mode: v.mode ?? null,
+      type: v.type ?? 'Information',
+      severity: Number(v.niveauseverite ?? 30),
+      dateDebut: v.debut ?? null,
+      dateFin: v.fin ?? null,
+    }))
 }
 
 async function fetchWithTimeout(url, timeoutMs = 8000) {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), timeoutMs)
   try {
-    const res = await fetch(url, { signal: controller.signal })
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: { Authorization: AUTH_HEADER },
+    })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     return await res.json()
   } finally {
