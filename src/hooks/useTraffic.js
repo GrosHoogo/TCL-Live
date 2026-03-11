@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 
 const TRAFFIC_URL =
-  'https://data.grandlyon.com/fr/geoserv/ogc/features/v1/collections/sytral:tcl_sytral.tclalerte_2_0_0/items?f=application/geo%2Bjson&limit=100'
+  'https://data.grandlyon.com/fr/datapusher/ws/rdata/tcl_sytral.tclalertetrafic_2/all.json?maxfeatures=100&start=1&filename=alertes-trafic-reseau-transports-commun-lyonnais-v2'
 
 function parseAlerts(geojson) {
   if (!geojson?.features) return []
