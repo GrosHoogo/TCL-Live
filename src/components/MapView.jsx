@@ -44,6 +44,17 @@ function getMarkerIcon(park) {
   return ICON_RED
 }
 
+/** Force Leaflet to recalculate its size when the tab becomes active */
+function MapResizer({ isActive }) {
+  const map = useMap()
+  useEffect(() => {
+    if (!isActive) return
+    const timer = setTimeout(() => map.invalidateSize(), 100)
+    return () => clearTimeout(timer)
+  }, [isActive, map])
+  return null
+}
+
 /** Auto-fit bounds when parkings change */
 function BoundsUpdater({ parkings, active }) {
   const map = useMap()
@@ -83,6 +94,7 @@ export default function MapView({ parkings, loading, isFavorite, onToggleFavorit
           maxZoom={19}
         />
 
+        <MapResizer isActive={isActive} />
         <BoundsUpdater parkings={parkings} active={isActive} />
 
         {parkings.map((park) => (

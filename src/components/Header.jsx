@@ -6,7 +6,7 @@ export default function Header({ onRefresh, loading, lastFetched, source }) {
     : null
 
   return (
-    <header className="bg-tcl-red text-white px-4 pt-4 pb-3 flex items-center justify-between shadow-md flex-shrink-0 safe-top">
+    <header className="bg-tcl-red text-white px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-3 flex items-center justify-between shadow-md flex-shrink-0">
       <div>
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
